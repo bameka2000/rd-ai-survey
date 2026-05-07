@@ -1,0 +1,1450 @@
+<style>
+  :root {
+    --blue: #1E88E5;
+    --blue-deep: #0D47A1;
+    --orange: #FF7043;
+    --orange-deep: #E64A19;
+    --purple: #7E57C2;
+    --purple-deep: #512DA8;
+    --green: #9CCC65;
+    --green-deep: #689F38;
+    --ink: #1A237E;
+    --text: #212121;
+    --text-mute: #616161;
+    --bg-soft: #F7F9FC;
+    --white: #FFFFFF;
+    --accent: #FFC107;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 20px rgba(26,35,126,0.08);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.08), 0 20px 40px rgba(26,35,126,0.12);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #F0F2F8;
+    font-family: Georgia, "Times New Roman", serif;
+    color: var(--text);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Decorative top gradient band */
+  .band {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 8px;
+    background: linear-gradient(90deg, var(--blue) 0%, var(--blue) 25%, var(--orange) 25%, var(--orange) 50%, var(--purple) 50%, var(--purple) 75%, var(--green) 75%, var(--green) 100%);
+    z-index: 1000;
+  }
+
+  .shell {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 56px 28px 80px;
+  }
+
+  /* ===== HEADER ===== */
+  .hero {
+    background: var(--ink);
+    border-radius: 18px;
+    padding: 44px 44px 40px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    margin-bottom: 28px;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 220px; height: 220px;
+    background: var(--orange);
+    opacity: 0.25;
+    border-radius: 50%;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: -40px;
+    width: 180px; height: 180px;
+    background: var(--purple);
+    opacity: 0.3;
+    border-radius: 50%;
+  }
+  .hero > * { position: relative; z-index: 1; }
+  .tag {
+    display: inline-block;
+    background: var(--orange);
+    color: white;
+    font-family: "Arial Black", sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    margin-bottom: 18px;
+  }
+  .hero h1 {
+    font-family: "Arial Black", "Georgia", sans-serif;
+    font-size: 38px;
+    line-height: 1.1;
+    margin: 0 0 12px;
+    letter-spacing: -0.5px;
+  }
+  .hero h1 .accent { color: var(--orange); }
+  .hero .sub {
+    font-size: 16px;
+    color: #CADCFC;
+    font-style: italic;
+    max-width: 640px;
+    margin: 0;
+  }
+  .hero .meta {
+    margin-top: 22px;
+    font-size: 13px;
+    color: #9FB3E0;
+  }
+  .hero .meta strong { color: var(--accent); font-family: "Arial Black"; letter-spacing: 1px; }
+
+  /* ===== PROGRESS ===== */
+  .progress-wrap {
+    background: white;
+    border-radius: 14px;
+    padding: 18px 22px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .progress-label {
+    font-family: "Arial Black", sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .progress-track {
+    flex: 1;
+    height: 10px;
+    background: #E8EAF6;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue), var(--purple));
+    width: 0%;
+    transition: width 400ms cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 5px;
+  }
+  .progress-count {
+    font-family: "Arial Black";
+    font-size: 13px;
+    color: var(--text-mute);
+    white-space: nowrap;
+  }
+
+  /* ===== SECTION CARDS ===== */
+  .section {
+    background: white;
+    border-radius: 16px;
+    padding: 36px 40px 32px;
+    margin-bottom: 22px;
+    box-shadow: var(--shadow);
+    border-left: 6px solid var(--blue);
+    position: relative;
+    transition: box-shadow 200ms;
+  }
+  .section:hover { box-shadow: var(--shadow-lg); }
+  .section.orange { border-left-color: var(--orange); }
+  .section.purple { border-left-color: var(--purple); }
+  .section.green { border-left-color: var(--green-deep); }
+  .section.blue-deep { border-left-color: var(--blue-deep); }
+  .section.orange-deep { border-left-color: var(--orange-deep); }
+  .section.purple-deep { border-left-color: var(--purple-deep); }
+
+  .section-badge {
+    display: inline-block;
+    font-family: "Arial Black", sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--blue);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .section.orange .section-badge { color: var(--orange); }
+  .section.purple .section-badge { color: var(--purple); }
+  .section.green .section-badge { color: var(--green-deep); }
+  .section.blue-deep .section-badge { color: var(--blue-deep); }
+  .section.orange-deep .section-badge { color: var(--orange-deep); }
+  .section.purple-deep .section-badge { color: var(--purple-deep); }
+
+  .section-title {
+    font-family: "Arial Black", "Georgia", serif;
+    font-size: 22px;
+    color: var(--ink);
+    margin: 0 0 6px;
+    letter-spacing: -0.3px;
+  }
+  .section-lead {
+    font-style: italic;
+    color: var(--text-mute);
+    font-size: 14px;
+    margin: 0 0 22px;
+  }
+
+  /* ===== FORM ELEMENTS ===== */
+  .q {
+    margin-bottom: 26px;
+    padding-bottom: 22px;
+    border-bottom: 1px dashed #E0E0E0;
+  }
+  .q:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+  .q-label {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text);
+    margin-bottom: 12px;
+    display: block;
+    line-height: 1.45;
+  }
+  .q-label .required {
+    color: var(--orange-deep);
+    font-weight: bold;
+    margin-left: 4px;
+  }
+  .q-help {
+    font-size: 12px;
+    color: var(--text-mute);
+    font-style: italic;
+    margin-top: -8px;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  /* LIKERT SCALE */
+  .likert {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+  .likert label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 6px;
+    background: var(--bg-soft);
+    border: 2px solid transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 150ms;
+    text-align: center;
+  }
+  .likert label:hover {
+    background: #E3F2FD;
+    transform: translateY(-2px);
+  }
+  .likert input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .likert .num {
+    font-family: "Arial Black";
+    font-size: 22px;
+    color: var(--text-mute);
+  }
+  .likert .lbl {
+    font-size: 10.5px;
+    color: var(--text-mute);
+    line-height: 1.25;
+    font-weight: 600;
+  }
+  .likert input:checked + .num-wrap .num { color: white; }
+  .likert input:checked + .num-wrap .lbl { color: white; font-weight: 700; }
+  .likert input:checked + .num-wrap {
+    background: var(--blue);
+    border-radius: 6px;
+    padding: 6px 8px;
+    margin: -6px -8px;
+  }
+  .likert label:has(input:checked) {
+    background: var(--blue);
+    border-color: var(--blue-deep);
+    box-shadow: 0 4px 12px rgba(30,136,229,0.35);
+  }
+  .likert label:has(input:checked) .num,
+  .likert label:has(input:checked) .lbl {
+    color: white;
+  }
+
+  .section.orange .likert label:has(input:checked) { background: var(--orange); border-color: var(--orange-deep); box-shadow: 0 4px 12px rgba(255,112,67,0.35); }
+  .section.purple .likert label:has(input:checked) { background: var(--purple); border-color: var(--purple-deep); box-shadow: 0 4px 12px rgba(126,87,194,0.35); }
+  .section.green .likert label:has(input:checked) { background: var(--green-deep); border-color: #33691E; box-shadow: 0 4px 12px rgba(104,159,56,0.35); }
+  .section.blue-deep .likert label:has(input:checked) { background: var(--blue-deep); border-color: #002171; box-shadow: 0 4px 12px rgba(13,71,161,0.35); }
+  .section.orange-deep .likert label:has(input:checked) { background: var(--orange-deep); border-color: #BF360C; box-shadow: 0 4px 12px rgba(230,74,25,0.35); }
+  .section.purple-deep .likert label:has(input:checked) { background: var(--purple-deep); border-color: #311B92; box-shadow: 0 4px 12px rgba(81,45,168,0.35); }
+
+  /* MULTI-SELECT CHIPS */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 9px 16px;
+    background: var(--bg-soft);
+    border: 1.5px solid #D0D5E0;
+    border-radius: 24px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 150ms;
+    user-select: none;
+  }
+  .chip:hover { border-color: var(--blue); }
+  .chip input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .chip:has(input:checked) {
+    background: var(--ink);
+    color: white;
+    border-color: var(--ink);
+  }
+
+  /* TEXT INPUTS */
+  input[type="text"], textarea, select {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--bg-soft);
+    border: 1.5px solid #D0D5E0;
+    border-radius: 10px;
+    font-family: Georgia, serif;
+    font-size: 14px;
+    color: var(--text);
+    transition: border-color 150ms;
+    resize: vertical;
+  }
+  input[type="text"]:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--blue);
+    background: white;
+  }
+  textarea { min-height: 90px; line-height: 1.5; }
+
+  /* RADIO BUTTONS */
+  .radios { display: flex; flex-direction: column; gap: 10px; }
+  .radio-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    background: var(--bg-soft);
+    border: 1.5px solid transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 150ms;
+    font-size: 14px;
+  }
+  .radio-item:hover { background: #E3F2FD; }
+  .radio-item:has(input:checked) {
+    background: white;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 4px rgba(30,136,229,0.1);
+  }
+  .radio-item input[type="radio"] {
+    width: 18px; height: 18px;
+    accent-color: var(--blue);
+  }
+
+  /* SUBMIT */
+  .actions {
+    text-align: center;
+    margin-top: 30px;
+    padding: 30px;
+    background: linear-gradient(135deg, var(--ink), var(--blue-deep));
+    border-radius: 16px;
+    color: white;
+    box-shadow: var(--shadow-lg);
+  }
+  .actions h3 {
+    font-family: "Arial Black";
+    font-size: 22px;
+    margin: 0 0 8px;
+  }
+  .actions p {
+    margin: 0 0 20px;
+    color: #CADCFC;
+    font-style: italic;
+    font-size: 14px;
+  }
+  .btn {
+    display: inline-block;
+    padding: 15px 38px;
+    background: var(--orange);
+    color: white;
+    font-family: "Arial Black";
+    font-size: 14px;
+    letter-spacing: 2px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 150ms;
+    text-transform: uppercase;
+  }
+  .btn:hover:not(:disabled) { background: var(--orange-deep); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,112,67,0.4); }
+  .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+  .btn.secondary { background: rgba(255,255,255,0.15); margin-left: 10px; }
+  .btn.secondary:hover:not(:disabled) { background: rgba(255,255,255,0.25); }
+
+  /* THANK YOU & ADMIN */
+  .thankyou, .admin-panel {
+    display: none;
+    background: white;
+    border-radius: 18px;
+    padding: 48px 44px;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+  }
+  .thankyou.show, .admin-panel.show { display: block; }
+  .thankyou .check {
+    width: 88px; height: 88px;
+    background: var(--green);
+    border-radius: 50%;
+    margin: 0 auto 22px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 44px;
+    color: white;
+    box-shadow: 0 8px 24px rgba(104,159,56,0.35);
+  }
+  .thankyou h2 {
+    font-family: "Arial Black";
+    font-size: 32px;
+    color: var(--ink);
+    margin: 0 0 10px;
+  }
+  .thankyou p {
+    color: var(--text-mute);
+    font-size: 15px;
+    font-style: italic;
+    max-width: 500px;
+    margin: 0 auto 24px;
+  }
+
+  /* ADMIN */
+  .admin-panel { text-align: left; }
+  .admin-panel h2 {
+    font-family: "Arial Black";
+    font-size: 24px;
+    color: var(--ink);
+    margin: 0 0 6px;
+  }
+  .admin-panel .subtitle {
+    color: var(--text-mute);
+    font-style: italic;
+    margin-bottom: 26px;
+  }
+  .admin-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+  .stat {
+    background: var(--bg-soft);
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+    border-top: 4px solid var(--blue);
+  }
+  .stat.orange { border-top-color: var(--orange); }
+  .stat.purple { border-top-color: var(--purple); }
+  .stat .big {
+    font-family: "Arial Black";
+    font-size: 32px;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat .lbl {
+    font-size: 11px;
+    color: var(--text-mute);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .admin-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+  }
+  .admin-btn {
+    padding: 10px 18px;
+    border: 1.5px solid var(--ink);
+    background: white;
+    color: var(--ink);
+    font-family: Georgia, serif;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 150ms;
+  }
+  .admin-btn:hover { background: var(--ink); color: white; }
+  .admin-btn.primary { background: var(--orange); color: white; border-color: var(--orange); }
+  .admin-btn.primary:hover { background: var(--orange-deep); border-color: var(--orange-deep); }
+  .admin-btn.danger { border-color: var(--orange-deep); color: var(--orange-deep); }
+  .admin-btn.danger:hover { background: var(--orange-deep); color: white; }
+
+  .admin-results {
+    background: var(--bg-soft);
+    border-radius: 10px;
+    padding: 18px;
+    max-height: 400px;
+    overflow: auto;
+    font-family: Consolas, monospace;
+    font-size: 11.5px;
+    line-height: 1.5;
+  }
+  .admin-results .resp {
+    background: white;
+    padding: 12px 14px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    border-left: 3px solid var(--blue);
+  }
+  .admin-results .resp-head {
+    font-weight: bold;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+
+  /* GOOGLE DRIVE SETUP BOX */
+  .gdrive-box {
+    background: #FFF8E1;
+    border: 2px solid var(--accent);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 24px;
+  }
+  .gdrive-box h4 {
+    font-family: "Arial Black";
+    font-size: 14px;
+    color: var(--orange-deep);
+    margin: 0 0 10px;
+    letter-spacing: 1px;
+  }
+  .gdrive-box ol {
+    font-size: 13px;
+    color: var(--text);
+    margin: 0;
+    padding-left: 18px;
+    line-height: 1.7;
+  }
+  .gdrive-box code {
+    background: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 11.5px;
+    border: 1px solid #E0E0E0;
+  }
+  .gdrive-box input {
+    margin-top: 8px;
+    font-family: Consolas, monospace !important;
+    font-size: 11.5px !important;
+  }
+
+  /* VALIDATION */
+  .error {
+    color: var(--orange-deep);
+    font-size: 12px;
+    margin-top: 6px;
+    display: none;
+    font-weight: 600;
+  }
+  .error.show { display: block; }
+  .q.invalid { animation: shake 300ms; }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+
+  /* FOOTER */
+  .foot {
+    text-align: center;
+    padding: 32px 20px 0;
+    color: var(--text-mute);
+    font-size: 12px;
+    font-style: italic;
+  }
+  .foot a { color: var(--ink); }
+
+  /* ADMIN TOGGLE */
+  .admin-toggle {
+    position: fixed;
+    bottom: 18px;
+    right: 18px;
+    background: white;
+    border: 1.5px solid #E0E0E0;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    color: var(--text-mute);
+    cursor: pointer;
+    font-family: Georgia, serif;
+    box-shadow: var(--shadow);
+    z-index: 100;
+    transition: all 150ms;
+  }
+  .admin-toggle:hover { color: var(--ink); border-color: var(--ink); }
+
+  /* RESPONSIVE */
+  @media (max-width: 640px) {
+    .shell { padding: 40px 14px 60px; }
+    .hero { padding: 32px 26px 28px; }
+    .hero h1 { font-size: 28px; }
+    .section { padding: 26px 22px 24px; }
+    .likert { grid-template-columns: repeat(5, 1fr); gap: 4px; }
+    .likert .num { font-size: 17px; }
+    .likert .lbl { font-size: 9px; }
+    .admin-stats { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="band"></div>
+
+<div class="shell">
+
+  <!-- HEADER -->
+  <div class="hero">
+    <span class="tag">POST-SESSION SURVEY</span>
+    <h1>How was the <span class="accent">AI Learning</span> Session?</h1>
+    <p class="sub">Your feedback helps Restless Development Uganda keep building a staff culture where AI amplifies our work with young people — safely, ethically, and effectively.</p>
+    <div class="meta">
+      <strong>~5 MINUTES</strong> &nbsp;·&nbsp; Anonymous &nbsp;·&nbsp; Results feed directly into our learning record
+    </div>
+  </div>
+
+  <!-- SURVEY FORM -->
+  <form id="surveyForm" class="survey-form">
+
+    <!-- PROGRESS -->
+    <div class="progress-wrap">
+      <span class="progress-label">YOUR PROGRESS</span>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <span class="progress-count" id="progressCount">0 / 18</span>
+    </div>
+
+    <!-- SECTION 0: RESPONDENT CONTEXT -->
+    <div class="section">
+      <div class="section-badge">Section 1  ·  About you</div>
+      <h2 class="section-title">Tell us where you sit</h2>
+      <p class="section-lead">We ask so we can improve future sessions by team — not to identify you.</p>
+
+      <div class="q">
+        <label class="q-label">Which department are you in? <span class="required">*</span></label>
+        <select data-q="q1_dept" data-required="true">
+          <option value="">— choose one —</option>
+          <option>Communications</option>
+          <option>Finance &amp; Administration</option>
+          <option>People &amp; Performance (HR)</option>
+          <option>Programmes</option>
+          <option>MEL (Monitoring, Evaluation &amp; Learning)</option>
+          <option>Strategy &amp; Direction</option>
+          <option>Research</option>
+          <option>Business Development / Fundraising</option>
+          <option>Other</option>
+        </select>
+        <div class="error">Please select your department.</div>
+      </div>
+
+      <div class="q">
+        <label class="q-label">How would you describe your role? <span class="required">*</span></label>
+        <div class="radios">
+          <label class="radio-item"><input type="radio" name="q2_role" value="Field / Programme staff" data-q="q2_role" data-required="true"> Field / Programme staff</label>
+          <label class="radio-item"><input type="radio" name="q2_role" value="Office / Operations staff" data-q="q2_role"> Office / Operations staff</label>
+          <label class="radio-item"><input type="radio" name="q2_role" value="Manager / Team Lead" data-q="q2_role"> Manager / Team Lead</label>
+          <label class="radio-item"><input type="radio" name="q2_role" value="Leadership / Hub Director" data-q="q2_role"> Leadership / Hub Director</label>
+          <label class="radio-item"><input type="radio" name="q2_role" value="Volunteer / Intern / Young Researcher" data-q="q2_role"> Volunteer / Intern / Young Researcher</label>
+        </div>
+        <div class="error">Please pick one.</div>
+      </div>
+
+      <div class="q">
+        <label class="q-label">Before the session, how familiar were you with AI tools like ChatGPT or Claude? <span class="required">*</span></label>
+        <div class="likert">
+          <label><input type="radio" name="q3_prior" value="1" data-q="q3_prior" data-required="true"><span class="num">1</span><span class="lbl">Never used</span></label>
+          <label><input type="radio" name="q3_prior" value="2" data-q="q3_prior"><span class="num">2</span><span class="lbl">Tried once</span></label>
+          <label><input type="radio" name="q3_prior" value="3" data-q="q3_prior"><span class="num">3</span><span class="lbl">Occasionally</span></label>
+          <label><input type="radio" name="q3_prior" value="4" data-q="q3_prior"><span class="num">4</span><span class="lbl">Regularly</span></label>
+          <label><input type="radio" name="q3_prior" value="5" data-q="q3_prior"><span class="num">5</span><span class="lbl">Daily user</span></label>
+        </div>
+        <div class="error">Please rate your prior familiarity.</div>
+      </div>
+    </div>
+
+    <!-- SECTION 1: OUTCOME — UNDERSTANDING -->
+    <div class="section blue">
+      <div class="section-badge">Outcome 01  ·  Understanding</div>
+      <h2 class="section-title">Improved understanding of AI &amp; its relevance</h2>
+      <p class="section-lead">Did the session clarify what AI is — and why it matters for our work?</p>
+
+      <div class="q">
+        <label class="q-label">My understanding of AI and how it relates to my work has improved. <span class="required">*</span></label>
+        <div class="likert">
+          <label><input type="radio" name="q4_understanding" value="1" data-q="q4_understanding" data-required="true"><span class="num">1</span><span class="lbl">Strongly disagree</span></label>
+          <label><input type="radio" name="q4_understanding" value="2" data-q="q4_understanding"><span class="num">2</span><span class="lbl">Disagree</span></label>
+          <label><input type="radio" name="q4_understanding" value="3" data-q="q4_understanding"><span class="num">3</span><span class="lbl">Neutral</span></label>
+          <label><input type="radio" name="q4_understanding" value="4" data-q="q4_understanding"><span class="num">4</span><span class="lbl">Agree</span></label>
+          <label><input type="radio" name="q4_understanding" value="5" data-q="q4_understanding"><span class="num">5</span><span class="lbl">Strongly agree</span></label>
+        </div>
+        <div class="error">Please rate.</div>
+      </div>
+
+      <div class="q">
+        <label class="q-label">In your own words: describe the difference between an LLM and an AI Agent.</label>
+        <span class="q-help">Short answer is fine — one or two sentences shows it landed.</span>
+        <textarea data-q="q5_llm_agent" placeholder="e.g. An LLM answers a prompt. An AI agent can take multiple steps and use tools on my behalf."></textarea>
+      </div>
+    </div>
+
+    <!-- SECTION 2: OUTCOME — CONFIDENCE -->
+    <div class="section orange">
+      <div class="section-badge">Outcome 02  ·  Confidence</div>
+      <h2 class="section-title">Awareness &amp; confidence in using AI tools</h2>
+      <p class="section-lead">Do you feel ready to actually try what you learned?</p>
+
+      <div class="q">
+        <label class="q-label">I feel more confident using practical AI tools in my day-to-day work. <span class="required">*</span></label>
+        <div class="likert">
+          <label><input type="radio" name="q6_confidence" value="1" data-q="q6_confidence" data-required="true"><span class="num">1</span><span class="lbl">Strongly disagree</span></label>
+          <label><input type="radio" name="q6_confidence" value="2" data-q="q6_confidence"><span class="num">2</span><span class="lbl">Disagree</span></label>
+          <label><input type="radio" name="q6_confidence" value="3" data-q="q6_confidence"><span class="num">3</span><span class="lbl">Neutral</span></label>
+          <label><input type="radio" name="q6_confidence" value="4" data-q="q6_confidence"><span class="num">4</span><span class="lbl">Agree</span></label>
+          <label><input type="radio" name="q6_confidence" value="5" data-q="q6_confidence"><span class="num">5</span><span class="lbl">Strongly agree</span></label>
+        </div>
+        <div class="error">Please rate.</div>
+      </div>
+
+      <div class="q">
+        <label class="q-label">Which tools from the session would you actually try this month? (select all that apply)</label>
+        <div class="chips">
+          <label class="chip"><input type="checkbox" data-q="q7_tools" value="Claude"> Claude</label>
+          <label class="chip"><input type="checkbox" data-q="q7_tools" value="ChatGPT"> ChatGPT</label>
+          <label class="chip"><input type="checkbox" data-q="q7_tools" value="Google NotebookLM"> Google NotebookLM</label>
+          <label class="chip"><input type="checkbox" data-q="q7_tools" value="Perplexity"> Perplexity</label>
+          <label class="chip"><input type="checkbox" data-q="q7_tools" value="Microsoft Copilot"> Microsoft Copilot</label>
+          <label class="chip"><input type="checkbox" data-q="q7_tools" value="Otter.ai / Whisper"> Otter.ai / Whisper</label>
+          <label class="chip"><input type="checkbox" data-q="q7_tools" value="Canva AI"> Canva AI</label>
+          <label class="chip"><input type="checkbox" data-q="q7_tools" value="DeepL / Google Translate"> DeepL / Translate</label>
+          <label class="chip"><input type="checkbox" data-q="q7_tools" value="Zapier / Automation"> Zapier / Automation</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: OUTCOME — CAPACITY / INTEGRATION -->
+    <div class="section purple">
+      <div class="section-badge">Outcome 03  ·  Integration</div>
+      <h2 class="section-title">Capacity to integrate AI across functions</h2>
+      <p class="section-lead">Can you see yourself building AI into your actual workflow?</p>
+
+      <div class="q">
+        <label class="q-label">I can identify at least one task in my work that I will use AI to support. <span class="required">*</span></label>
+        <div class="likert">
+          <label><input type="radio" name="q8_integration" value="1" data-q="q8_integration" data-required="true"><span class="num">1</span><span class="lbl">Strongly disagree</span></label>
+          <label><input type="radio" name="q8_integration" value="2" data-q="q8_integration"><span class="num">2</span><span class="lbl">Disagree</span></label>
+          <label><input type="radio" name="q8_integration" value="3" data-q="q8_integration"><span class="num">3</span><span class="lbl">Neutral</span></label>
+          <label><input type="radio" name="q8_integration" value="4" data-q="q8_integration"><span class="num">4</span><span class="lbl">Agree</span></label>
+          <label><input type="radio" name="q8_integration" value="5" data-q="q8_integration"><span class="num">5</span><span class="lbl">Strongly agree</span></label>
+        </div>
+        <div class="error">Please rate.</div>
+      </div>
+
+      <div class="q">
+        <label class="q-label">Describe one task from your work you plan to try with AI in the next 2 weeks. <span class="required">*</span></label>
+        <span class="q-help">Be specific — "drafting the Q1 narrative for GIZ" is stronger than "writing".</span>
+        <textarea data-q="q9_task_commitment" data-required="true" placeholder="e.g. Translating SHE SOARS facilitator notes into Luganda for the Mayuge group."></textarea>
+        <div class="error">Please share one task — even a rough idea is fine.</div>
+      </div>
+
+      <div class="q">
+        <label class="q-label">On your current adoption ladder (slide 48), where are you now? <span class="required">*</span></label>
+        <div class="radios">
+          <label class="radio-item"><input type="radio" name="q10_level" value="Level 1 — Explorer" data-q="q10_level" data-required="true"> <strong>Level 1 — Explorer</strong> &nbsp;·&nbsp; Single daily task like email drafts or summaries.</label>
+          <label class="radio-item"><input type="radio" name="q10_level" value="Level 2 — Practitioner" data-q="q10_level"> <strong>Level 2 — Practitioner</strong> &nbsp;·&nbsp; 2–3 tools across the week; saving hours.</label>
+          <label class="radio-item"><input type="radio" name="q10_level" value="Level 3 — Builder" data-q="q10_level"> <strong>Level 3 — Builder</strong> &nbsp;·&nbsp; Creating templates and training colleagues.</label>
+          <label class="radio-item"><input type="radio" name="q10_level" value="Level 4 — Champion" data-q="q10_level"> <strong>Level 4 — Champion</strong> &nbsp;·&nbsp; Designing AI-assisted workflows with measured gains.</label>
+        </div>
+        <div class="error">Please pick a level.</div>
+      </div>
+    </div>
+
+    <!-- SECTION 4: OUTCOME — ETHICS & SAFEGUARDING -->
+    <div class="section orange-deep">
+      <div class="section-badge">Outcome 04  ·  Ethics &amp; safeguarding</div>
+      <h2 class="section-title">Ethical, responsible &amp; safe use of AI</h2>
+      <p class="section-lead">This is the most important section. Please be honest — it shapes our policies.</p>
+
+      <div class="q">
+        <label class="q-label">I understand the data protection &amp; safeguarding risks of using AI with sensitive information. <span class="required">*</span></label>
+        <div class="likert">
+          <label><input type="radio" name="q11_ethics" value="1" data-q="q11_ethics" data-required="true"><span class="num">1</span><span class="lbl">Strongly disagree</span></label>
+          <label><input type="radio" name="q11_ethics" value="2" data-q="q11_ethics"><span class="num">2</span><span class="lbl">Disagree</span></label>
+          <label><input type="radio" name="q11_ethics" value="3" data-q="q11_ethics"><span class="num">3</span><span class="lbl">Neutral</span></label>
+          <label><input type="radio" name="q11_ethics" value="4" data-q="q11_ethics"><span class="num">4</span><span class="lbl">Agree</span></label>
+          <label><input type="radio" name="q11_ethics" value="5" data-q="q11_ethics"><span class="num">5</span><span class="lbl">Strongly agree</span></label>
+        </div>
+        <div class="error">Please rate.</div>
+      </div>
+
+      <div class="q">
+        <label class="q-label">Before sending data to an AI tool, what should you remove? (select all that apply) <span class="required">*</span></label>
+        <span class="q-help">This is a knowledge check — pick everything that must be stripped.</span>
+        <div class="chips">
+          <label class="chip"><input type="checkbox" data-q="q12_pii" value="Names of participants"> Names of participants</label>
+          <label class="chip"><input type="checkbox" data-q="q12_pii" value="Phone numbers"> Phone numbers</label>
+          <label class="chip"><input type="checkbox" data-q="q12_pii" value="School / employer names"> School / employer names</label>
+          <label class="chip"><input type="checkbox" data-q="q12_pii" value="Exact village / street"> Exact village / street</label>
+          <label class="chip"><input type="checkbox" data-q="q12_pii" value="Ages under 18"> Ages under 18</label>
+          <label class="chip"><input type="checkbox" data-q="q12_pii" value="Health / disability details"> Health / disability details</label>
+          <label class="chip"><input type="checkbox" data-q="q12_pii" value="Passwords / API keys"> Passwords / API keys</label>
+          <label class="chip"><input type="checkbox" data-q="q12_pii" value="The programme name"> The programme name</label>
+        </div>
+        <div class="error" data-for="q12_pii">Please select at least two items.</div>
+      </div>
+
+      <div class="q">
+        <label class="q-label">If a youth's disclosure of harm appears mid-analysis, what is the correct first action? <span class="required">*</span></label>
+        <div class="radios">
+          <label class="radio-item"><input type="radio" name="q13_disclosure" value="Keep analysing so we don't lose progress" data-q="q13_disclosure" data-required="true"> Keep analysing so we don't lose progress</label>
+          <label class="radio-item"><input type="radio" name="q13_disclosure" value="Anonymise it and continue" data-q="q13_disclosure"> Anonymise it and continue</label>
+          <label class="radio-item"><input type="radio" name="q13_disclosure" value="Stop the AI workflow, record, escalate to the Designated Safeguarding Officer" data-q="q13_disclosure"> <strong>Stop the AI workflow, record, escalate to the Designated Safeguarding Officer</strong></label>
+          <label class="radio-item"><input type="radio" name="q13_disclosure" value="Delete the quote and move on" data-q="q13_disclosure"> Delete the quote and move on</label>
+        </div>
+        <div class="error">Please pick one.</div>
+      </div>
+    </div>
+
+    <!-- SECTION 5: OUTCOME — LINKAGE & IMPACT -->
+    <div class="section green">
+      <div class="section-badge">Outcome 05  ·  Linkage to impact</div>
+      <h2 class="section-title">AI, innovation &amp; youth engagement</h2>
+      <p class="section-lead">Do you see the connection between AI tools and our organisational impact?</p>
+
+      <div class="q">
+        <label class="q-label">I can see how AI supports youth engagement and our impact priority areas. <span class="required">*</span></label>
+        <div class="likert">
+          <label><input type="radio" name="q14_linkage" value="1" data-q="q14_linkage" data-required="true"><span class="num">1</span><span class="lbl">Strongly disagree</span></label>
+          <label><input type="radio" name="q14_linkage" value="2" data-q="q14_linkage"><span class="num">2</span><span class="lbl">Disagree</span></label>
+          <label><input type="radio" name="q14_linkage" value="3" data-q="q14_linkage"><span class="num">3</span><span class="lbl">Neutral</span></label>
+          <label><input type="radio" name="q14_linkage" value="4" data-q="q14_linkage"><span class="num">4</span><span class="lbl">Agree</span></label>
+          <label><input type="radio" name="q14_linkage" value="5" data-q="q14_linkage"><span class="num">5</span><span class="lbl">Strongly agree</span></label>
+        </div>
+        <div class="error">Please rate.</div>
+      </div>
+
+      <div class="q">
+        <label class="q-label">Which Restless Development impact area will AI help you most in?</label>
+        <div class="chips">
+          <label class="chip"><input type="checkbox" data-q="q15_impact" value="Livelihoods"> Livelihoods</label>
+          <label class="chip"><input type="checkbox" data-q="q15_impact" value="SRHR"> SRHR</label>
+          <label class="chip"><input type="checkbox" data-q="q15_impact" value="Climate Justice"> Climate Justice</label>
+          <label class="chip"><input type="checkbox" data-q="q15_impact" value="Governance &amp; Voice"> Governance &amp; Voice</label>
+          <label class="chip"><input type="checkbox" data-q="q15_impact" value="Education"> Education</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 6: OUTCOME — MOTIVATION -->
+    <div class="section purple-deep">
+      <div class="section-badge">Outcome 06  ·  Motivation</div>
+      <h2 class="section-title">Motivation to adopt digital solutions</h2>
+      <p class="section-lead">Did the session spark the will to actually use this?</p>
+
+      <div class="q">
+        <label class="q-label">I am motivated to explore and adopt digital / AI solutions in my work. <span class="required">*</span></label>
+        <div class="likert">
+          <label><input type="radio" name="q16_motivation" value="1" data-q="q16_motivation" data-required="true"><span class="num">1</span><span class="lbl">Strongly disagree</span></label>
+          <label><input type="radio" name="q16_motivation" value="2" data-q="q16_motivation"><span class="num">2</span><span class="lbl">Disagree</span></label>
+          <label><input type="radio" name="q16_motivation" value="3" data-q="q16_motivation"><span class="num">3</span><span class="lbl">Neutral</span></label>
+          <label><input type="radio" name="q16_motivation" value="4" data-q="q16_motivation"><span class="num">4</span><span class="lbl">Agree</span></label>
+          <label><input type="radio" name="q16_motivation" value="5" data-q="q16_motivation"><span class="num">5</span><span class="lbl">Strongly agree</span></label>
+        </div>
+        <div class="error">Please rate.</div>
+      </div>
+
+      <div class="q">
+        <label class="q-label">What is the one thing that would most help you start using AI with confidence?</label>
+        <span class="q-help">Training, templates, policies, a peer buddy, equipment, budget — tell us what to fix.</span>
+        <textarea data-q="q17_blocker" placeholder="e.g. A monthly 30-min Slack clinic where we share prompts that worked."></textarea>
+      </div>
+    </div>
+
+    <!-- SECTION 7: OPEN FEEDBACK -->
+    <div class="section">
+      <div class="section-badge">Section 8  ·  Open feedback</div>
+      <h2 class="section-title">Any last words?</h2>
+      <p class="section-lead">What should future sessions keep, change, or add?</p>
+
+      <div class="q">
+        <label class="q-label">Any final comments, ideas, or things that didn't quite land?</label>
+        <textarea data-q="q18_final" placeholder="Anything — short or long. Honest feedback helps us most."></textarea>
+      </div>
+    </div>
+
+    <!-- SUBMIT -->
+    <div class="actions">
+      <h3>Ready to submit?</h3>
+      <p>Your response is saved locally and can be exported for upload to Google Drive.</p>
+      <button type="submit" class="btn" id="submitBtn">Submit my response</button>
+    </div>
+  </form>
+
+  <!-- THANK YOU -->
+  <div class="thankyou" id="thankyou">
+    <div class="check">✓</div>
+    <h2>Asante sana!</h2>
+    <p>Your response has been saved. Your honest feedback will directly shape the next AI learning session and our organisational AI policy — onwards with young people at the centre of everything.</p>
+    <button class="btn" onclick="resetSurvey()">Submit another response</button>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div class="admin-panel" id="adminPanel">
+    <h2>📊 Survey Admin · Responses Dashboard</h2>
+    <p class="subtitle">View, export, and upload responses to Google Drive.</p>
+
+    <div class="admin-stats">
+      <div class="stat"><div class="big" id="statTotal">0</div><div class="lbl">Total responses</div></div>
+      <div class="stat orange"><div class="big" id="statAvg">—</div><div class="lbl">Avg. confidence (Q6)</div></div>
+      <div class="stat purple"><div class="big" id="statDepts">0</div><div class="lbl">Departments represented</div></div>
+    </div>
+
+    <div class="admin-actions">
+      <button class="admin-btn primary" onclick="downloadCSV()">⬇ Download CSV (for Google Drive)</button>
+      <button class="admin-btn" onclick="downloadJSON()">⬇ Download JSON</button>
+      <button class="admin-btn" onclick="copyCSV()">📋 Copy CSV to clipboard</button>
+      <button class="admin-btn" onclick="refreshAdmin()">🔄 Refresh</button>
+      <button class="admin-btn danger" onclick="clearAll()">✕ Clear all responses</button>
+    </div>
+
+    <!-- Google Drive setup guide -->
+    <div class="gdrive-box">
+      <h4>⚡ HOW TO GET RESPONSES INTO <code>favorwisdom2014@gmail.com</code> GOOGLE DRIVE</h4>
+      <ol>
+        <li><strong>Simple route (any browser, 1 minute):</strong> Click <em>"Download CSV"</em> above, then drag the downloaded <code>ai_learning_survey_responses.csv</code> file into Google Drive (or Google Sheets → File → Import).</li>
+        <li><strong>Automatic route (one-time setup, ~10 minutes):</strong> In the Google account, open Google Apps Script (script.google.com) → New project → paste the template below → Deploy as Web App → copy the URL → paste it in the field and save. From then on, every submission will auto-append to a Google Sheet in the account's Drive.</li>
+      </ol>
+      <label class="q-label" style="margin-top:14px;font-size:13px;">Google Apps Script Web App URL (optional):</label>
+      <input type="text" id="gscriptUrl" placeholder="https://script.google.com/macros/s/AK.../exec" />
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button class="admin-btn primary" onclick="saveGScriptUrl()">Save URL</button>
+        <button class="admin-btn" onclick="testGScript()">Test connection</button>
+        <button class="admin-btn" onclick="showScriptTemplate()">View Apps Script template</button>
+      </div>
+      <div id="gscriptStatus" style="margin-top:10px;font-size:12.5px;color:var(--text-mute);"></div>
+    </div>
+
+    <h3 style="font-family:'Arial Black';font-size:15px;color:var(--ink);margin:22px 0 10px;letter-spacing:1px;">RAW RESPONSES</h3>
+    <div class="admin-results" id="adminResults">
+      <div style="text-align:center;color:var(--text-mute);padding:20px;">No responses yet.</div>
+    </div>
+
+    <div style="text-align:center;margin-top:20px;">
+      <button class="admin-btn" onclick="showSurvey()">← Back to survey</button>
+    </div>
+  </div>
+
+  <div class="foot">
+    Restless Development Uganda  ·  AI Learning Session Evaluation  ·  <a href="#" onclick="toggleAdmin();return false;">Admin view</a>
+  </div>
+</div>
+
+<button class="admin-toggle" onclick="toggleAdmin()">🔒 Admin</button>
+
+<script>
+(function() {
+  'use strict';
+
+  // ===== CONFIG =====
+  const STORAGE_KEY_RESPONSES = 'rd_ai_survey_responses';
+  const STORAGE_KEY_GSCRIPT = 'rd_ai_survey_gscript_url';
+  const SURVEY_VERSION = '1.0';
+
+  // Questions to track progress (one per q-id)
+  const TRACKED_QUESTIONS = [
+    'q1_dept','q2_role','q3_prior','q4_understanding','q5_llm_agent',
+    'q6_confidence','q7_tools','q8_integration','q9_task_commitment','q10_level',
+    'q11_ethics','q12_pii','q13_disclosure','q14_linkage','q15_impact',
+    'q16_motivation','q17_blocker','q18_final'
+  ];
+
+  const form = document.getElementById('surveyForm');
+  const progressFill = document.getElementById('progressFill');
+  const progressCount = document.getElementById('progressCount');
+
+  // ========== PROGRESS ==========
+  function updateProgress() {
+    const answered = new Set();
+    // radios & selects
+    document.querySelectorAll('[data-q]').forEach(el => {
+      const qid = el.dataset.q;
+      if (el.type === 'radio' && el.checked) answered.add(qid);
+      else if (el.type === 'checkbox' && el.checked) answered.add(qid);
+      else if (el.tagName === 'SELECT' && el.value) answered.add(qid);
+      else if (el.tagName === 'TEXTAREA' && el.value.trim().length > 0) answered.add(qid);
+      else if (el.tagName === 'INPUT' && el.type === 'text' && el.value.trim().length > 0) answered.add(qid);
+    });
+    const total = TRACKED_QUESTIONS.length;
+    const pct = Math.round((answered.size / total) * 100);
+    progressFill.style.width = pct + '%';
+    progressCount.textContent = answered.size + ' / ' + total;
+  }
+  form.addEventListener('input', updateProgress);
+  form.addEventListener('change', updateProgress);
+  updateProgress();
+
+  // ========== COLLECT DATA ==========
+  function collectResponses() {
+    const data = {};
+    TRACKED_QUESTIONS.forEach(qid => { data[qid] = null; });
+
+    // Radios: find the checked one by name
+    const radioGroups = new Set();
+    document.querySelectorAll('input[type="radio"][data-q]').forEach(el => radioGroups.add(el.name));
+    radioGroups.forEach(name => {
+      const checked = document.querySelector(`input[type="radio"][name="${name}"]:checked`);
+      if (checked) data[checked.dataset.q] = checked.value;
+    });
+
+    // Checkboxes: collect arrays
+    document.querySelectorAll('input[type="checkbox"][data-q]').forEach(el => {
+      const qid = el.dataset.q;
+      if (el.checked) {
+        if (!Array.isArray(data[qid])) data[qid] = [];
+        data[qid].push(el.value);
+      }
+    });
+
+    // Selects
+    document.querySelectorAll('select[data-q]').forEach(el => {
+      data[el.dataset.q] = el.value || null;
+    });
+
+    // Textareas & text inputs
+    document.querySelectorAll('textarea[data-q], input[type="text"][data-q]').forEach(el => {
+      data[el.dataset.q] = el.value.trim() || null;
+    });
+
+    return data;
+  }
+
+  // ========== VALIDATION ==========
+  function validateForm() {
+    let firstInvalid = null;
+    let valid = true;
+
+    // Clear previous
+    document.querySelectorAll('.error.show').forEach(e => e.classList.remove('show'));
+    document.querySelectorAll('.q.invalid').forEach(q => q.classList.remove('invalid'));
+
+    // Required radio groups
+    const requiredRadios = new Set();
+    document.querySelectorAll('input[type="radio"][data-required="true"]').forEach(el => requiredRadios.add(el.name));
+    requiredRadios.forEach(name => {
+      const any = document.querySelector(`input[type="radio"][name="${name}"]:checked`);
+      if (!any) {
+        const sample = document.querySelector(`input[type="radio"][name="${name}"]`);
+        const qEl = sample.closest('.q');
+        if (qEl) {
+          qEl.classList.add('invalid');
+          const err = qEl.querySelector('.error');
+          if (err) err.classList.add('show');
+          if (!firstInvalid) firstInvalid = qEl;
+        }
+        valid = false;
+      }
+    });
+
+    // Required selects
+    document.querySelectorAll('select[data-required="true"]').forEach(el => {
+      if (!el.value) {
+        const qEl = el.closest('.q');
+        if (qEl) {
+          qEl.classList.add('invalid');
+          const err = qEl.querySelector('.error');
+          if (err) err.classList.add('show');
+          if (!firstInvalid) firstInvalid = qEl;
+        }
+        valid = false;
+      }
+    });
+
+    // Required textareas
+    document.querySelectorAll('textarea[data-required="true"]').forEach(el => {
+      if (el.value.trim().length < 3) {
+        const qEl = el.closest('.q');
+        if (qEl) {
+          qEl.classList.add('invalid');
+          const err = qEl.querySelector('.error');
+          if (err) err.classList.add('show');
+          if (!firstInvalid) firstInvalid = qEl;
+        }
+        valid = false;
+      }
+    });
+
+    // Q12: require at least 2 PII options
+    const q12Checked = document.querySelectorAll('input[data-q="q12_pii"]:checked').length;
+    if (q12Checked < 2) {
+      const q12 = document.querySelector('[data-for="q12_pii"]');
+      if (q12) q12.classList.add('show');
+      const qEl = document.querySelector('input[data-q="q12_pii"]').closest('.q');
+      if (qEl) {
+        qEl.classList.add('invalid');
+        if (!firstInvalid) firstInvalid = qEl;
+      }
+      valid = false;
+    }
+
+    if (!valid && firstInvalid) firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return valid;
+  }
+
+  // ========== STORAGE ==========
+  // Uses localStorage so the survey works in any browser, opened from any source
+  // (file system, web server, email attachment, Claude artifact, etc.)
+  async function getStoredResponses() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY_RESPONSES);
+      return raw ? JSON.parse(raw) : [];
+    } catch (err) {
+      console.error('Storage read failed:', err);
+      return [];
+    }
+  }
+
+  async function saveResponses(responses) {
+    try {
+      localStorage.setItem(STORAGE_KEY_RESPONSES, JSON.stringify(responses));
+      return true;
+    } catch (err) {
+      console.error('Storage save failed:', err);
+      return false;
+    }
+  }
+
+  async function getGScriptUrl() {
+    try {
+      return localStorage.getItem(STORAGE_KEY_GSCRIPT) || '';
+    } catch (err) {
+      return '';
+    }
+  }
+
+  async function setGScriptUrl(url) {
+    try {
+      localStorage.setItem(STORAGE_KEY_GSCRIPT, url);
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
+
+  // ========== SUBMIT ==========
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Saving...';
+
+    const responseData = collectResponses();
+    const record = {
+      id: 'r_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
+      submitted_at: new Date().toISOString(),
+      survey_version: SURVEY_VERSION,
+      ...responseData
+    };
+
+    // Save to local storage (best effort — incognito mode may block this)
+    let savedLocally = false;
+    try {
+      const existing = await getStoredResponses();
+      existing.push(record);
+      savedLocally = await saveResponses(existing);
+    } catch (err) {
+      console.warn('Local save failed:', err);
+    }
+
+    // Attempt to send to Google Apps Script if configured
+    let sentRemotely = false;
+    const gscriptUrl = await getGScriptUrl();
+    if (gscriptUrl) {
+      try {
+        await fetch(gscriptUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(record)
+        });
+        // mode:'no-cors' means we cannot read the response, so we treat
+        // a fetch that didn't throw as success
+        sentRemotely = true;
+      } catch (err) {
+        console.warn('Google Sheets send failed:', err);
+      }
+    }
+
+    // Success if EITHER local save OR remote send worked
+    if (savedLocally || sentRemotely) {
+      form.style.display = 'none';
+      const thankyouEl = document.getElementById('thankyou');
+      thankyouEl.classList.add('show');
+      // Show a small note if only remote succeeded
+      if (!savedLocally && sentRemotely) {
+        const note = thankyouEl.querySelector('.private-note') || (() => {
+          const n = document.createElement('p');
+          n.className = 'private-note';
+          n.style.cssText = 'font-size:12px;color:var(--text-mute);margin-top:14px;';
+          n.textContent = 'Note: your response was sent to the central spreadsheet. (Local browser save was unavailable in this mode — common in private/incognito browsing.)';
+          thankyouEl.querySelector('p').after(n);
+          return n;
+        })();
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit my response';
+      alert('Could not save your response. If you are in private/incognito mode, please switch to a normal browser window. Otherwise, ask the facilitator to set up the Google Sheet connection.');
+    }
+  });
+
+  // ========== ADMIN ==========
+  window.toggleAdmin = async function() {
+    const panel = document.getElementById('adminPanel');
+    const ty = document.getElementById('thankyou');
+    if (panel.classList.contains('show')) {
+      panel.classList.remove('show');
+      form.style.display = 'block';
+      ty.classList.remove('show');
+    } else {
+      form.style.display = 'none';
+      ty.classList.remove('show');
+      panel.classList.add('show');
+      await refreshAdmin();
+      const gurl = await getGScriptUrl();
+      if (gurl) document.getElementById('gscriptUrl').value = gurl;
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  window.showSurvey = function() {
+    document.getElementById('adminPanel').classList.remove('show');
+    form.style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  window.resetSurvey = function() {
+    document.getElementById('thankyou').classList.remove('show');
+    form.reset();
+    document.getElementById('submitBtn').disabled = false;
+    document.getElementById('submitBtn').textContent = 'Submit my response';
+    form.style.display = 'block';
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  window.refreshAdmin = async function() {
+    const responses = await getStoredResponses();
+    const resultsEl = document.getElementById('adminResults');
+
+    document.getElementById('statTotal').textContent = responses.length;
+
+    if (responses.length === 0) {
+      resultsEl.innerHTML = '<div style="text-align:center;color:var(--text-mute);padding:20px;">No responses yet.</div>';
+      document.getElementById('statAvg').textContent = '—';
+      document.getElementById('statDepts').textContent = '0';
+      return;
+    }
+
+    // Average of Q6 confidence
+    const q6Values = responses.map(r => parseFloat(r.q6_confidence)).filter(v => !isNaN(v));
+    const avgQ6 = q6Values.length ? (q6Values.reduce((a,b) => a+b, 0) / q6Values.length).toFixed(1) : '—';
+    document.getElementById('statAvg').textContent = avgQ6 + ' / 5';
+
+    // Unique departments
+    const depts = new Set(responses.map(r => r.q1_dept).filter(Boolean));
+    document.getElementById('statDepts').textContent = depts.size;
+
+    // Render
+    resultsEl.innerHTML = responses.map((r, i) => {
+      const time = new Date(r.submitted_at).toLocaleString();
+      return `<div class="resp">
+        <div class="resp-head">#${i+1} · ${escapeHtml(r.q1_dept || '—')} · ${escapeHtml(r.q2_role || '—')} · ${time}</div>
+        <div>Understanding: ${escapeHtml(r.q4_understanding)}/5 · Confidence: ${escapeHtml(r.q6_confidence)}/5 · Ethics: ${escapeHtml(r.q11_ethics)}/5 · Motivation: ${escapeHtml(r.q16_motivation)}/5</div>
+        <div>Planned task: <em>${escapeHtml(r.q9_task_commitment || '—')}</em></div>
+        <div>Level: ${escapeHtml(r.q10_level || '—')} · Impact focus: ${escapeHtml(Array.isArray(r.q15_impact) ? r.q15_impact.join(', ') : '—')}</div>
+      </div>`;
+    }).join('');
+  };
+
+  function escapeHtml(str) {
+    if (str == null) return '';
+    return String(str).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  }
+
+  // CSV Export
+  function buildCSV(responses) {
+    const cols = ['id','submitted_at','survey_version',...TRACKED_QUESTIONS];
+    const header = cols.join(',');
+    const rows = responses.map(r => {
+      return cols.map(c => {
+        let v = r[c];
+        if (Array.isArray(v)) v = v.join('; ');
+        if (v === null || v === undefined) v = '';
+        v = String(v).replace(/"/g, '""');
+        return `"${v}"`;
+      }).join(',');
+    });
+    return header + '\n' + rows.join('\n');
+  }
+
+  window.downloadCSV = async function() {
+    const responses = await getStoredResponses();
+    if (responses.length === 0) { alert('No responses to export.'); return; }
+    const csv = buildCSV(responses);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ai_learning_survey_responses_${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  window.downloadJSON = async function() {
+    const responses = await getStoredResponses();
+    if (responses.length === 0) { alert('No responses to export.'); return; }
+    const blob = new Blob([JSON.stringify(responses, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ai_learning_survey_responses_${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  window.copyCSV = async function() {
+    const responses = await getStoredResponses();
+    if (responses.length === 0) { alert('No responses yet.'); return; }
+    const csv = buildCSV(responses);
+    try {
+      await navigator.clipboard.writeText(csv);
+      alert('CSV copied. You can now paste it into a Google Sheet on favorwisdom2014@gmail.com.');
+    } catch (e) {
+      alert('Copy failed. Please use the Download CSV button instead.');
+    }
+  };
+
+  window.clearAll = async function() {
+    if (!confirm('Delete ALL responses? This cannot be undone. Download the CSV first if you want a backup.')) return;
+    await saveResponses([]);
+    await refreshAdmin();
+    alert('All responses cleared.');
+  };
+
+  window.saveGScriptUrl = async function() {
+    const url = document.getElementById('gscriptUrl').value.trim();
+    if (!url) { alert('Please paste a URL.'); return; }
+    if (!url.startsWith('https://script.google.com/')) {
+      if (!confirm('URL does not look like a Google Apps Script URL. Save anyway?')) return;
+    }
+    await setGScriptUrl(url);
+    document.getElementById('gscriptStatus').textContent = '✓ URL saved. All new submissions will be sent to this endpoint.';
+    document.getElementById('gscriptStatus').style.color = 'var(--green-deep)';
+  };
+
+  window.testGScript = async function() {
+    const url = document.getElementById('gscriptUrl').value.trim();
+    if (!url) { alert('Paste a URL first.'); return; }
+    const testPayload = { id: 'test_' + Date.now(), submitted_at: new Date().toISOString(), test: true };
+    try {
+      await fetch(url, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(testPayload)
+      });
+      document.getElementById('gscriptStatus').innerHTML = '✓ Test sent. Check the target Google Sheet to confirm a test row appeared. (Due to browser limits we cannot read the response directly.)';
+      document.getElementById('gscriptStatus').style.color = 'var(--green-deep)';
+    } catch (err) {
+      document.getElementById('gscriptStatus').textContent = '✗ Send failed: ' + err.message;
+      document.getElementById('gscriptStatus').style.color = 'var(--orange-deep)';
+    }
+  };
+
+  window.showScriptTemplate = function() {
+    const template = `// Google Apps Script template - paste this into script.google.com under favorwisdom2014@gmail.com
+// 1. Create a Google Sheet named "RD AI Survey Responses" in that account's Drive
+// 2. In the sheet, go to Extensions → Apps Script, delete any code, paste this, then save
+// 3. Click Deploy → New deployment → Type: Web app → Execute as: Me → Who has access: Anyone
+// 4. Copy the Web App URL, paste it into the survey's admin panel, click Save URL
+
+const SHEET_NAME = 'Responses';
+
+function doPost(e) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME) ||
+                SpreadsheetApp.getActiveSpreadsheet().insertSheet(SHEET_NAME);
+
+  const data = JSON.parse(e.postData.contents);
+
+  // Create header row on first write
+  if (sheet.getLastRow() === 0) {
+    const headers = ['id','submitted_at','survey_version',
+      'q1_dept','q2_role','q3_prior',
+      'q4_understanding','q5_llm_agent',
+      'q6_confidence','q7_tools',
+      'q8_integration','q9_task_commitment','q10_level',
+      'q11_ethics','q12_pii','q13_disclosure',
+      'q14_linkage','q15_impact',
+      'q16_motivation','q17_blocker','q18_final'];
+    sheet.appendRow(headers);
+  }
+
+  const row = [
+    data.id || '', data.submitted_at || '', data.survey_version || '',
+    data.q1_dept || '', data.q2_role || '', data.q3_prior || '',
+    data.q4_understanding || '', data.q5_llm_agent || '',
+    data.q6_confidence || '', (data.q7_tools || []).join('; '),
+    data.q8_integration || '', data.q9_task_commitment || '', data.q10_level || '',
+    data.q11_ethics || '', (data.q12_pii || []).join('; '), data.q13_disclosure || '',
+    data.q14_linkage || '', (data.q15_impact || []).join('; '),
+    data.q16_motivation || '', data.q17_blocker || '', data.q18_final || ''
+  ];
+  sheet.appendRow(row);
+
+  return ContentService.createTextOutput(JSON.stringify({ ok: true }))
+         .setMimeType(ContentService.MimeType.JSON);
+}`;
+    const w = window.open('', '_blank');
+    if (w) {
+      w.document.write('<pre style="font-family:Consolas,monospace;font-size:12px;padding:20px;background:#1e1e1e;color:#d4d4d4;min-height:100vh;margin:0;white-space:pre-wrap;">' +
+        template.replace(/</g, '&lt;') + '</pre>');
+    } else {
+      navigator.clipboard.writeText(template).then(() => alert('Template copied to clipboard. Paste it into script.google.com'));
+    }
+  };
+
+})();
+</script>
