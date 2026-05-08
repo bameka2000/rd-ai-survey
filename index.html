@@ -938,21 +938,23 @@
       <button class="admin-btn danger" onclick="clearAll()">✕ Clear all responses</button>
     </div>
 
-    <!-- Google Drive setup guide -->
-    <div class="gdrive-box">
-      <h4>⚡ HOW TO GET RESPONSES INTO <code>favorwisdom2014@gmail.com</code> GOOGLE DRIVE</h4>
-      <ol>
-        <li><strong>Simple route (any browser, 1 minute):</strong> Click <em>"Download CSV"</em> above, then drag the downloaded <code>ai_learning_survey_responses.csv</code> file into Google Drive (or Google Sheets → File → Import).</li>
-        <li><strong>Automatic route (one-time setup, ~10 minutes):</strong> In the Google account, open Google Apps Script (script.google.com) → New project → paste the template below → Deploy as Web App → copy the URL → paste it in the field and save. From then on, every submission will auto-append to a Google Sheet in the account's Drive.</li>
-      </ol>
-      <label class="q-label" style="margin-top:14px;font-size:13px;">Google Apps Script Web App URL (optional):</label>
-      <input type="text" id="gscriptUrl" placeholder="https://script.google.com/macros/s/AK.../exec" />
-      <div style="display:flex;gap:8px;margin-top:10px;">
-        <button class="admin-btn primary" onclick="saveGScriptUrl()">Save URL</button>
-        <button class="admin-btn" onclick="testGScript()">Test connection</button>
-        <button class="admin-btn" onclick="showScriptTemplate()">View Apps Script template</button>
-      </div>
-      <div id="gscriptStatus" style="margin-top:10px;font-size:12.5px;color:var(--text-mute);"></div>
+    <!-- Google Drive connection status -->
+    <div class="gdrive-box" id="gdriveBox">
+      <h4 id="gdriveBoxTitle">⚡ GOOGLE SHEETS CONNECTION</h4>
+      <div id="connectionStatus" style="font-size:13px;line-height:1.7;color:var(--text);margin-bottom:12px;"></div>
+      <details style="margin-top:10px;">
+        <summary style="cursor:pointer;font-size:12.5px;color:var(--text-mute);font-weight:600;">Advanced: override the connected URL for this browser</summary>
+        <div style="margin-top:12px;">
+          <label class="q-label" style="font-size:12px;">Custom Google Apps Script URL (overrides the hardcoded one):</label>
+          <input type="text" id="gscriptUrl" placeholder="https://script.google.com/macros/s/AK.../exec" />
+          <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+            <button class="admin-btn primary" onclick="saveGScriptUrl()">Save override</button>
+            <button class="admin-btn" onclick="testGScript()">Test connection</button>
+            <button class="admin-btn" onclick="showScriptTemplate()">View Apps Script template</button>
+          </div>
+          <div id="gscriptStatus" style="margin-top:10px;font-size:12.5px;color:var(--text-mute);"></div>
+        </div>
+      </details>
     </div>
 
     <h3 style="font-family:'Arial Black';font-size:15px;color:var(--ink);margin:22px 0 10px;letter-spacing:1px;">RAW RESPONSES</h3>
@@ -976,10 +978,23 @@
 (function() {
   'use strict';
 
-  // ===== CONFIG =====
+  // ============================================================
+  // ===== CONFIG — EDIT THIS LINE TO BAKE IN YOUR GOOGLE SHEET =====
+  // ============================================================
+  // GOOGLE SHEETS CONNECTION — every submission goes to this URL automatically
+  // To change the destination Google Sheet, replace the URL between the quotes.
+  // To require per-browser admin entry instead, set this to '' (empty string).
+  // ============================================================
+  const HARDCODED_GSCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyu0XjGbAKCE-Dd9gDafCDsoBE8Y9RGp10Dq3B9EOF3GzQJtF-WtwOZf5oXJauiQr3w/exec';
+  // ============================================================
+
+  // ===== INTERNAL CONFIG =====
   const STORAGE_KEY_RESPONSES = 'rd_ai_survey_responses';
   const STORAGE_KEY_GSCRIPT = 'rd_ai_survey_gscript_url';
   const SURVEY_VERSION = '1.0';
+
+  // In-memory fallback if localStorage is unavailable (private mode, file://, etc.)
+  const memoryStore = {};
 
   // Questions to track progress (one per q-id)
   const TRACKED_QUESTIONS = [
@@ -1122,43 +1137,74 @@
   }
 
   // ========== STORAGE ==========
-  // Uses localStorage so the survey works in any browser, opened from any source
-  // (file system, web server, email attachment, Claude artifact, etc.)
+  // Three-layer fallback: hardcoded URL → localStorage → in-memory.
+  // This survives private browsing, file:// protocol issues, and sandboxed contexts.
+  function lsAvailable() {
+    try {
+      const k = '__test_' + Date.now();
+      localStorage.setItem(k, '1');
+      localStorage.removeItem(k);
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
+
   async function getStoredResponses() {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY_RESPONSES);
-      return raw ? JSON.parse(raw) : [];
+      if (lsAvailable()) {
+        const raw = localStorage.getItem(STORAGE_KEY_RESPONSES);
+        return raw ? JSON.parse(raw) : [];
+      }
+      return memoryStore[STORAGE_KEY_RESPONSES] || [];
     } catch (err) {
       console.error('Storage read failed:', err);
-      return [];
+      return memoryStore[STORAGE_KEY_RESPONSES] || [];
     }
   }
 
   async function saveResponses(responses) {
     try {
-      localStorage.setItem(STORAGE_KEY_RESPONSES, JSON.stringify(responses));
+      if (lsAvailable()) {
+        localStorage.setItem(STORAGE_KEY_RESPONSES, JSON.stringify(responses));
+      }
+      memoryStore[STORAGE_KEY_RESPONSES] = responses;
       return true;
     } catch (err) {
-      console.error('Storage save failed:', err);
-      return false;
+      console.error('Storage save failed, using memory fallback:', err);
+      memoryStore[STORAGE_KEY_RESPONSES] = responses;
+      return true;
     }
   }
 
   async function getGScriptUrl() {
-    try {
-      return localStorage.getItem(STORAGE_KEY_GSCRIPT) || '';
-    } catch (err) {
-      return '';
+    // Hardcoded URL always wins
+    if (HARDCODED_GSCRIPT_URL && HARDCODED_GSCRIPT_URL.trim()) {
+      return HARDCODED_GSCRIPT_URL.trim();
     }
+    // Then localStorage
+    try {
+      if (lsAvailable()) {
+        const v = localStorage.getItem(STORAGE_KEY_GSCRIPT);
+        if (v) return v;
+      }
+    } catch (err) {}
+    // Finally in-memory
+    return memoryStore[STORAGE_KEY_GSCRIPT] || '';
   }
 
   async function setGScriptUrl(url) {
+    let savedSomewhere = false;
     try {
-      localStorage.setItem(STORAGE_KEY_GSCRIPT, url);
-      return true;
+      if (lsAvailable()) {
+        localStorage.setItem(STORAGE_KEY_GSCRIPT, url);
+        savedSomewhere = true;
+      }
     } catch (err) {
-      return false;
+      console.warn('localStorage save failed, using memory fallback:', err);
     }
+    memoryStore[STORAGE_KEY_GSCRIPT] = url;
+    return true; // Always succeed — memory store works as last resort
   }
 
   // ========== SUBMIT ==========
@@ -1245,7 +1291,46 @@
       panel.classList.add('show');
       await refreshAdmin();
       const gurl = await getGScriptUrl();
-      if (gurl) document.getElementById('gscriptUrl').value = gurl;
+      const urlInput = document.getElementById('gscriptUrl');
+      const statusEl = document.getElementById('gscriptStatus');
+      const connEl = document.getElementById('connectionStatus');
+      const connTitle = document.getElementById('gdriveBoxTitle');
+
+      if (HARDCODED_GSCRIPT_URL && HARDCODED_GSCRIPT_URL.trim()) {
+        // URL is baked into the file — show success status
+        connTitle.innerHTML = '✓ CONNECTED TO GOOGLE SHEET';
+        const shortUrl = HARDCODED_GSCRIPT_URL.replace(/^https:\/\//, '').slice(0, 60) + '...';
+        connEl.innerHTML =
+          '<div style="background:#E8F5E9;border-radius:8px;padding:12px 14px;margin-bottom:10px;">' +
+          '<strong style="color:var(--green-deep);">Live and active.</strong> Every submission — from any device, any browser — is sent automatically to the connected Google Sheet on <code>favorwisdom2014@gmail.com</code>.' +
+          '</div>' +
+          '<div style="font-size:11.5px;color:var(--text-mute);">Endpoint: <code style="font-size:10.5px;">' + shortUrl + '</code></div>' +
+          '<div style="font-size:11.5px;color:var(--text-mute);margin-top:8px;">Backup: every submission also exports as CSV via the buttons above. Use that for a manual archive any time.</div>';
+        urlInput.value = gurl;
+        urlInput.disabled = true;
+        urlInput.style.opacity = '0.7';
+        statusEl.innerHTML = 'Hardcoded URL is active. To change it, edit <code>HARDCODED_GSCRIPT_URL</code> in the HTML source.';
+        statusEl.style.color = 'var(--text-mute)';
+      } else if (gurl) {
+        // URL is saved in localStorage but not hardcoded
+        connTitle.innerHTML = '⚠ CONNECTED IN THIS BROWSER ONLY';
+        connEl.innerHTML =
+          '<div style="background:#FFF3E0;border-radius:8px;padding:12px 14px;margin-bottom:10px;">' +
+          '<strong style="color:var(--orange-deep);">Browser-local connection.</strong> A URL is saved, but only in this browser. If you share the file or others access it from different devices, they will <em>not</em> have the connection. To make it work for everyone, bake the URL into the HTML by editing <code>HARDCODED_GSCRIPT_URL</code>.' +
+          '</div>';
+        urlInput.value = gurl;
+        statusEl.innerHTML = '✓ URL saved (in browser storage). Status: ' + (lsAvailable() ? 'persistent' : '<strong style="color:var(--orange-deep)">in-memory only</strong>');
+        statusEl.style.color = 'var(--green-deep)';
+      } else {
+        // No URL anywhere
+        connTitle.innerHTML = '✗ NOT CONNECTED';
+        connEl.innerHTML =
+          '<div style="background:#FFEBEE;border-radius:8px;padding:12px 14px;margin-bottom:10px;">' +
+          '<strong style="color:var(--orange-deep);">No Google Sheet connection.</strong> Submissions are saved in the browser only. Use the "Download CSV" button above to export, or set up a connection by editing <code>HARDCODED_GSCRIPT_URL</code> in the HTML source.' +
+          '</div>';
+        statusEl.innerHTML = 'No URL configured. Paste your Google Apps Script Web App URL above and click Save override.';
+        statusEl.style.color = 'var(--text-mute)';
+      }
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -1367,13 +1452,35 @@
 
   window.saveGScriptUrl = async function() {
     const url = document.getElementById('gscriptUrl').value.trim();
-    if (!url) { alert('Please paste a URL.'); return; }
+    const statusEl = document.getElementById('gscriptStatus');
+
+    if (!url) {
+      statusEl.textContent = '⚠ Please paste a URL first.';
+      statusEl.style.color = 'var(--orange-deep)';
+      return;
+    }
     if (!url.startsWith('https://script.google.com/')) {
       if (!confirm('URL does not look like a Google Apps Script URL. Save anyway?')) return;
     }
+
+    // If a hardcoded URL is set, the input field can't actually override it
+    if (HARDCODED_GSCRIPT_URL && HARDCODED_GSCRIPT_URL.trim()) {
+      statusEl.innerHTML = '⚠ A hardcoded URL is already baked into the file (HARDCODED_GSCRIPT_URL). Submissions will use that URL — to change it, edit the HTML file directly.';
+      statusEl.style.color = 'var(--orange-deep)';
+      return;
+    }
+
     await setGScriptUrl(url);
-    document.getElementById('gscriptStatus').textContent = '✓ URL saved. All new submissions will be sent to this endpoint.';
-    document.getElementById('gscriptStatus').style.color = 'var(--green-deep)';
+
+    // Verify by reading back
+    const readback = await getGScriptUrl();
+    if (readback === url) {
+      statusEl.innerHTML = '✓ URL saved successfully. All submissions will now be sent to this endpoint.<br><small style="color:var(--text-mute);">Storage method: ' + (lsAvailable() ? 'browser localStorage (persists across sessions)' : 'in-memory only (will be lost when you close this tab — please bake the URL into the file using the HARDCODED_GSCRIPT_URL constant for permanent storage)') + '</small>';
+      statusEl.style.color = 'var(--green-deep)';
+    } else {
+      statusEl.innerHTML = '✗ Save did not persist. Your browser may be blocking storage. Recommended fix: edit the HTML file and set <code>HARDCODED_GSCRIPT_URL</code> at the top of the script tag to your URL.';
+      statusEl.style.color = 'var(--orange-deep)';
+    }
   };
 
   window.testGScript = async function() {
